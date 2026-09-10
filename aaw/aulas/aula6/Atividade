@@ -1,0 +1,36 @@
+Atividade Aula 6
+
+Vocês são os arquitetos dos 4 fluxos abaixo. Para CADA cenário:
+
+Decidam o estilo de comunicação: síncrono (request/response), assíncrono (fila/evento) ou API Gateway/BFF
+Desenhem o fluxo com caixas (serviços) e setas (chamadas/mensagens) no espaço indicado
+Justifiquem com pelo menos 2 fatores (urgência da resposta, tolerância a atraso, picos, falhas...)
+Apontem o principal risco da escolha de vocês
+
+CENÁRIO 01 — PagFácil — aprovar ou negar AGORA
+No checkout do PagFácil, ao clicar em “Pagar”, o serviço de Pagamentos precisa consultar o saldo/limite do cliente no serviço de Contas — e a resposta define se a venda acontece neste exato momento.
+
+O cliente está na tela, esperando o resultado da compra
+Sem a resposta de Contas, não há decisão possível: aprovar às cegas é proibido
+Tempo de resposta do serviço de Contas: ~80 ms em condições normais
+Sua análise:
+
+Estilo recomendado: ☐ Síncrono ☐ Assíncrono (fila/evento) ☐ API Gateway/BFF
+
+Desenhe o fluxo (caixas = serviços, setas = chamadas/mensagens):
+
+Justificativa (mínimo 2 fatores):
+
+Principal risco da escolha:
+
+__________________________________________________________________________________________________________
+
+1. Nesse caso o estilo de comunicação seria síncrono
+
+2. [ Cliente / Tela de Checkout ] -> 1.Clica em "Pagar" (HTTP POST) ->[ Serviço de Pagamentos ] 2.Consulta Saldo/Limite (HTTP GET / RPC) ~80ms ->          
+   [ Serviço de Contas ] 3. Retorna Saldo/Limite OK (HTTP 200) -> [ Serviço de Pagamentos ] 4. Processa e autoriza a venda -> [ Cliente / Tela de Checkout ]
+   (Exibe: "Compra Aprovada!")
+
+3. As justificativas são Urgência da resposta e Intolerância a erros, visto que é imprescindível que tenha a comunicação rápida e eficiente entre Pagamentos e Contas para não haver qualquer erro ou problema na experiencia do usuário.
+
+4. O principal risco dessa escolha é de que um dos serviços esteja lento ou indisponível, fazendo com que o processo não possa ser concluído
